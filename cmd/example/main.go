@@ -3,13 +3,21 @@ package main
 import (
 	"flag"
 	"fmt"
-	lab2 "github.com/roman-mazur/architecture-lab-2"
+	"strings"
+	"io"
+	"os"
+	lab2 "https://github.com/IP94-rocketBunny-architecture/Lab2"
 )
 
-var (
+func getFlagsValues() (inputExpression, fileIn, fileOut *string) {
+	defer flag.Parse()
+	
 	inputExpression = flag.String("e", "", "Expression to compute")
-	// TODO: Add other flags support for input and output configuration.
-)
+	filein = flag.String("i", "", "input file")
+	fileout = flag.String("o", "", "output file")
+	return
+}
+
 
 func main() {
 	flag.Parse()
