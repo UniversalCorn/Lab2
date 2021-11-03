@@ -1,12 +1,12 @@
 package main
 
 import (
+	"io"
+	"os"
 	"flag"
 	"fmt"
 	"strings"
-	"io"
-	"os"
-	lab2 "https://github.com/IP94-rocketBunny-architecture/Lab2"
+	Lab2 "https://github.com/IP94-rocketBunny-architecture/Lab2"
 )
 
 func getFlagsValues() (inputExpression, fileIn, fileOut *string) {
@@ -18,18 +18,29 @@ func getFlagsValues() (inputExpression, fileIn, fileOut *string) {
 	return
 }
 
-
 func main() {
-	flag.Parse()
-
-	// TODO: Change this to accept input from the command line arguments as described in the task and
-	//       output the results using the ComputeHandler instance.
-	//       handler := &lab2.ComputeHandler{
-	//           Input: {construct io.Reader according the command line parameters},
-	//           Output: {construct io.Writer according the command line parameters},
-	//       }
-	//       err := handler.Compute()
-
-	res, _ := lab2.PrefixToPostfix("+ 2 2")
-	fmt.Println(res)
+	var in io.Reader
+	var out io.Writer
+	var inputExpression, fileIn, fileout *string = getFlagsValues()
+	
+	if *fileIn != "" && *inputExpression != "" {
+		err := fmt.Errorf("more than one expr is not needed")
+		panic(err)
+	}
+	
+	if *inputExpression != "" {
+		in = strings.NewReader(*inputExpression)
+	} else if *inputFilename != "" {
+		in, _ = os.Open(*inputFilename)
+	}
+	if *outputFilename != "" {
+		out, _ = os.Create(*outputFilename)
+	} else {
+		out = os.Stdout
+	}
+	handler := Lab2.ComputeHandler{Input: in, Output: out}
+	err := handler.Compute()
+	if err != nil {
+		panic(err)
+	}
 }
