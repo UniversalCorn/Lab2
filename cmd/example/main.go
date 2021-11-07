@@ -9,7 +9,7 @@ import (
 	Lab2 "https://github.com/IP94-rocketBunny-architecture/Lab2"
 )
 
-func getFlagsValues() (inputExpression, fileIn, fileOut *string) {
+func getFlagsValues() (inputExpression, fileIn, fileout *string) {
 	defer flag.Parse()
 	
 	inputExpression = flag.String("e", "", "Expression to compute")
@@ -30,10 +30,10 @@ func main() {
 	
 	if *inputExpression != "" {
 		in = strings.NewReader(*inputExpression)
-	} else if *inputFilename != "" {
-		in, _ = os.Open(*inputFilename)
+	} else if *fileIn != "" {
+		in, _ = os.Open(*fileIn)
 	}
-	if *outputFilename != "" {
+	if *fileout != "" {
 		out, _ = os.Create(*outputFilename)
 	} else {
 		out = os.Stdout
