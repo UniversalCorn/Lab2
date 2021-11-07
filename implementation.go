@@ -53,7 +53,7 @@ func (v *validator) CheckOperator(str string) bool {
 func PostfixToInfix(postfixStr string) (infixStr string, err error) {
 	v := validator{Operator: `[-\+\*\^\/]`, Operand: `(\d+|(\d+[,\.]\d+))`}
 	if !v.ValidSrting(postfixStr) {
-		err = fmt.Errorf("invalid expression")
+		err = fmt.Errorf("invalid input expression")
 		return
 	}
 	var operatorsStack []string
