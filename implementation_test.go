@@ -18,7 +18,7 @@ func (s *TestSuite) TestPostfixToInfix(c *C) {
 		"10 9 8 7 6 5 4 - / ^ - * +": "10 + 9 * (8 - 7 ^ (6 / (5 - 4)))",
 		"Random text....":            "invalid expression",
 		"993 711.2021 - 11 + - -":    "too many operators",
-		"":                           "invalid input",
+		"":                           "invalid expression",
 	}
 
 	for postfix, expected := range examples {
