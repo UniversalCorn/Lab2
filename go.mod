@@ -1,4 +1,4 @@
-/module github.com/IP94-rocketBunny-architecture/Lab2
+module github.com/IP94-rocketBunny-architecture/Lab2
 
 go 1.17
 

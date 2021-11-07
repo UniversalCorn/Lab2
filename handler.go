@@ -7,32 +7,33 @@ import (
 	"strings"
 )
 
+// ComputeHandler prefix to infix interpreter
 type ComputeHandler struct {
 	Input  io.Reader
 	Output io.Writer
 }
 
+// Compute prefix to infix wrapper
 func (ch *ComputeHandler) Compute() error {
 	if ch.Input == nil {
-		return fmt.Errorf("input is undefined")
+		return fmt.Errorf("input is not specified")
 	}
 	if ch.Output == nil {
-		return fmt.Errorf("output is undefined")
+		return fmt.Errorf("output is not specified")
 	}
-	buf, inputError := ioutil.ReadAll(ch.Input)
-	if inputError != nil {
-		return inputError
+	buf, readErr := ioutil.ReadAll(ch.Input)
+	if readErr != nil {
+		return readErr
 	}
-	bufString = string(buf)
-	inputString := strings.Trim(bufString, "\n")
-	computed, computeErr := PostfixToInfix(inputString)
+	strInput := strings.Trim(string(buf), "\n")
+	computed, computeErr := PostfixToInfix(strInput)
 	if computeErr != nil {
 		return computeErr
 	}
 	res := []byte(computed + "\n")
-	_, outputError := ch.Output.Write(res)
-	if outputError != nil {
-		return outputError
+	_, writeErr := ch.Output.Write(res)
+	if writeErr != nil {
+		return writeErr
 	}
 	return nil
 }
