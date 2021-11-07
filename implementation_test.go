@@ -4,20 +4,41 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	. "gopkg.in/check.v1"
 )
 
-func TestPrefixToPostfix(t *testing.T) {
-	res, err := PrefixToPostfix("+ 5 * - 4 2 3")
-	if assert.Nil(t, err) {
-		assert.Equal(t, "4 2 - 3 * 5 +", res)
+func TestImplementation(t *testing.T) { TestingT(t) }
+
+func (s *TestSuite) TestPostfixToInfix(c *C) {
+	examples := map[string]string{
+		"123 22.828 - 54 *":          "(123 - 22.828) * 54",
+		"20211202 11 +":              "20211202 + 11",
+		"1 2 3 -":                    "too many arguments",
+		"3.14 11 ^ 44 *":             "3.14 ^ 11 * 44",
+		"10 9 8 7 6 5 4 - / ^ - * +": "10 + 9 * (8 - 7 ^ (6 / (5 - 4)))",
+		"Random text....":            "invalid input, there can be only operators and numbers",
+		"993 711.2021 - 11 + - -":    "too many operators",
+		"":                           "invalid input",
+	}
+
+	for postfix, expected := range examples {
+		res, err := PostfixToInfix(postfix)
+		if err != nil {
+			c.Assert(err, ErrorMatches, expected)
+		} else {
+			c.Assert(res, Equals, expected)
+		}
 	}
 }
 
-func ExamplePrefixToPostfix() {
-	res, _ := PrefixToPostfix("+ 2 2")
-	fmt.Println(res)
+func ExamplePostfixToInfix() {
+	res, err := PostfixToInfix("1000 7 - 0 ^")
+	if err != nil {
+		panic(err)
+	} else {
+		fmt.Println(res)
+	}
 
 	// Output:
-	// 2 2 +
+	// (1000 - 7) ^ 0
 }
