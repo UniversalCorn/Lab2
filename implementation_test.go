@@ -13,12 +13,12 @@ func (s *TestSuite) TestPostfixToInfix(c *C) {
 	examples := map[string]string{
 		"123 22.828 - 54 *":          "(123 - 22.828) * 54",
 		"20211202 11 +":              "20211202 + 11",
-		"1 2 3 -":                    "too many arguments",
+		"1 2 3 -":                    "too many operands",
 		"3.14 11 ^ 44 *":             "3.14 ^ 11 * 44",
 		"10 9 8 7 6 5 4 - / ^ - * +": "10 + 9 * (8 - 7 ^ (6 / (5 - 4)))",
-		"Random text....":            "invalid input, there can be only operators and numbers",
+		"Random text....":            "invalid input expression",
 		"993 711.2021 - 11 + - -":    "too many operators",
-		"":                           "invalid input",
+		"":                           "invalid input expression",
 	}
 
 	for postfix, expected := range examples {

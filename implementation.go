@@ -28,14 +28,13 @@ func (v *validator) CheckArgsAmount(args []string) error {
 			operands++
 		}
 	}
-	switch {
-	case operators+operands != len(args):
-		return fmt.Errorf("invalid expression argument(s)")
-	case operands > operators+1:
+	if operators+operands != len(args) {
+		return fmt.Errorf("invalid expression argument")
+	} else if operands > operators+1 {
 		return fmt.Errorf("too many operands")
-	case operators > operands-1:
+	} else if operators > operands-1 {
 		return fmt.Errorf("too many operators")
-	default:
+	} else {
 		return nil
 	}
 }
@@ -45,21 +44,21 @@ func (v *validator) IncludesOperator(str string) bool {
 	return includes
 }
 
-func (v *validator) IsOperator(str string) bool {
+func (v *validator) CheckOperator(str string) bool {
 	macthOperator := fmt.Sprintf(`^%s$`, v.Operator)
 	includes, _ := regexp.MatchString(macthOperator, str)
 	return includes
 }
 
 func PostfixToInfix(postfixStr string) (infixStr string, err error) {
-	v := validator{Operator: `[-\+\*\^\/]`, Operand: `(\d+|(\d+[,\.]\d+))`} //проверить на валидацию входящие символы, операторы и операнды с точкой или без
+	v := validator{Operator: `[-\+\*\^\/]`, Operand: `(\d+|(\d+[,\.]\d+))`}
 	if !v.ValidSrting(postfixStr) {
 		err = fmt.Errorf("invalid input expression")
 		return
 	}
 	var operatorsStack []string
 	var infixHeap []string
-	operatorsPriorities := map[string]uint8{
+	prop := map[string]uint8{
 		"+": 1,
 		"-": 1,
 		"*": 2,
@@ -72,34 +71,28 @@ func PostfixToInfix(postfixStr string) (infixStr string, err error) {
 		return
 	}
 
-	for _, arg := range postfixArgs {
-		if !v.IsOperator(arg) {
-			infixHeap = append(infixHeap, arg)
+	for _, operator := range postfixArgs {
+		if !v.CheckOperator(operator) {
+			infixHeap = append(infixHeap, operator)
 			continue
 		}
-		operator := arg
 		operatorsStack = append(operatorsStack, operator)
-		slicedEnd := len(infixHeap) - 2
-		sliced := infixHeap[slicedEnd:]
-		infixHeap = infixHeap[:slicedEnd]
-		operand1, operand2 := sliced[0], sliced[1]
+		sliced := infixHeap[(len(infixHeap) - 2):]
+		infixHeap = infixHeap[:(len(infixHeap) - 2)]
 
 		if len(operatorsStack) > 1 {
-			prevOperatorIndex := len(operatorsStack) - 2
-			prevOperator := operatorsStack[prevOperatorIndex]
+			prevOperator := operatorsStack[(len(operatorsStack) - 2)]
 
-			isPowerOperators := operatorsPriorities[operator] == 3 && operatorsPriorities[prevOperator] == 3
-			higherPriority := operatorsPriorities[operator] > operatorsPriorities[prevOperator]
-			if higherPriority || isPowerOperators {
-				if v.IncludesOperator(operand2) {
-					operand2 = "(" + operand2 + ")"
+			if prop[operator] > prop[prevOperator] || prop[operator] == 3 && prop[prevOperator] == 3 {
+				if v.IncludesOperator(sliced[1]) {
+					sliced[1] = "(" + sliced[1] + ")"
 				} else {
-					operand1 = "(" + operand1 + ")"
+					sliced[0] = "(" + sliced[0] + ")"
 				}
 			}
 		}
 
-		operand := fmt.Sprintf("%s %s %s", operand1, operator, operand2)
+		operand := fmt.Sprintf("%s %s %s", sliced[0], operator, sliced[1])
 		infixHeap = append(infixHeap, operand)
 	}
 
